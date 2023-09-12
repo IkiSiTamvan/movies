@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,6 +16,7 @@ public class MovieDto {
 
     private Integer id;
 
+    @NotBlank
     @Size(max = 100, message = "title can't longer than 100 char")
     private String title;
     @Size(max = 200, message = "Description can't longer than 200 char")
@@ -27,13 +29,13 @@ public class MovieDto {
     @Size(max = 200, message = "Image can't longer than 200 char")
     private String image;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastPlaying;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+7")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+7")
     private Date createdAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+7")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+7")
     private Date updatedAt;
 
     public Integer getId() {
