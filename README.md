@@ -3,6 +3,7 @@
 
 A Simple service created with spring boot, to store your movies data. It covers creation, update, and deletion the movie data. 
 
+with some additional validation using spring boot validation, we can see some anotation in MovieDto class to see which field need to be validated before request is processed. Additionaly we also will modify the error response from the @valid anotation, so it will only show the most important data we need.
 
 
 
