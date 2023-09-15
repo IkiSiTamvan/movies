@@ -13,13 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -43,28 +42,36 @@ public class MovieController {
     public ResponseEntity<MovieDto> getMovieById(@PathVariable("id") Integer id) {
 
         Optional<Movie> movie = movieService.getMovieById(id);
-        if(movie.isPresent()){
+        if (movie.isPresent()) {
             return new ResponseEntity<>(convertToDto(movie.get()), HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
+    @GetMapping("/movies/title/{title}")
+    public ResponseEntity<List<MovieDto>> getMovieByTitle(@PathVariable("title") String title) {
+
+        List<Movie> movies = movieService.getMoviesByTitle(title);
+        List<MovieDto> movieDtos = movies.stream().map(this::convertToDto).collect(Collectors.toList());
+        return new ResponseEntity<>(movieDtos, HttpStatus.OK);
+    }
 
     @PostMapping("/movies")
     public ResponseEntity<MovieDto> createMovie(@Valid @RequestBody MovieDto movieDto) {
         try {
-            Movie movie = movieService.save(new Movie(movieDto.getTitle(), movieDto.getDescription(), movieDto.getRating(),movieDto.getImage(), movieDto.getLastPlaying()));
+            Movie movie = movieService.save(new Movie(movieDto.getTitle(), movieDto.getDescription(),
+                    movieDto.getRating(), movieDto.getImage(), movieDto.getLastPlaying()));
             return new ResponseEntity<>(convertToDto(movie), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PutMapping(value="/movies/{id}")
+    @PutMapping(value = "/movies/{id}")
     public ResponseEntity<MovieDto> updateMovie(@PathVariable("id") Integer id, @Valid @RequestBody MovieDto movieDto) {
         Optional<Movie> movieOp = movieService.getMovieById(id);
-        if(movieOp.isPresent()){
+        if (movieOp.isPresent()) {
             Movie updateMovie = movieOp.get();
             updateMovie.setTitle(movieDto.getTitle());
             updateMovie.setDescription(movieDto.getDescription());
@@ -73,23 +80,23 @@ public class MovieController {
             updateMovie.setLastPlaying(movieDto.getLastPlaying());
 
             return new ResponseEntity<>(convertToDto(movieService.save(updateMovie)), HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
     }
 
     @DeleteMapping("/movies/{id}")
-    public ResponseEntity<HttpStatus> deleteMovie(@PathVariable("id") Integer id){
+    public ResponseEntity<HttpStatus> deleteMovie(@PathVariable("id") Integer id) {
         Optional<Movie> movie = movieService.getMovieById(id);
-        if(movie.isPresent()){
+        if (movie.isPresent()) {
             movieService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
     private MovieDto convertToDto(Movie movie) {
         MovieDto dto = modelMapper.map(movie, MovieDto.class);
         return dto;
